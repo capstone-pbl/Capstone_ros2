@@ -19,14 +19,23 @@ ament_target_dependencies(motor rclcpp geometry_msgs)
 add_executable(odom src/PI_TO_LAPTOP/odom.cpp)
 ament_target_dependencies(odom rclcpp geometry_msgs nav_msgs)
 
+find_package(nav2_msgs REQUIRED)
+find_package(rclcpp_action REQUIRED)
+
+add_executable(brain src/LAPTOP_TO_PI/brain.cpp)
+ament_target_dependencies(brain rclcpp std_msgs nav2_msgs rclcpp_action)
 install(TARGETS
   motor
   odom
+  brain
   DESTINATION lib/${PROJECT_NAME}
 )
 
 install(DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
 )
+
+
+
 
 ament_package()
