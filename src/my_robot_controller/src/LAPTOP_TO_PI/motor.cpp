@@ -6,7 +6,7 @@
 #include <unistd.h>   // write, close
 #include <cstdio>     // sprintf
 
-#define L 0.4038
+#define L 0.288
 #define circumference (M_PI * 0.065)
 
 Motor::Motor() : Node("Motor"), serial_fd(-1)
