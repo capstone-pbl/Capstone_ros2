@@ -9,10 +9,9 @@ RCLCPP_INFO(this->get_logger(), "콜백 호출됨 ");
   tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
   prev_time=this->now();
   //엔코더피드백을 받아서 자기위치추정해서 odom토픽으로 퍼블리시
-auto qos=rclcpp::QoS(10).best_effort();
-  odom_ = this->create_publisher<nav_msgs::msg::Odometry>("/odom", qos);
+  odom_ = this->create_publisher<nav_msgs::msg::Odometry>("/odom", 10);
   actual_vel=this->create_subscription<geometry_msgs::msg::Twist>
-  ("/actual_vel",qos,[this](geometry_msgs::msg::Twist::SharedPtr msg)
+  ("/actual_vel",10,[this](geometry_msgs::msg::Twist::SharedPtr msg)
   {
     
     rclcpp::Time now = this->now();          
@@ -57,15 +56,6 @@ auto qos=rclcpp::QoS(10).best_effort();
     t.transform.rotation.w = q.w();
 
     tf_broadcaster_->sendTransform(t);
-    geometry_msgs::msg::TransformStamped laser_tf{};
-    laser_tf.header.stamp = now;
-    laser_tf.header.frame_id = "base_footprint";
-    laser_tf.child_frame_id = "laser";
-    laser_tf.transform.translation.x = 0.0;
-    laser_tf.transform.translation.y = 0.0;
-    laser_tf.transform.translation.z = 0.0;
-    laser_tf.transform.rotation.w = 1.0;
-    tf_broadcaster_->sendTransform(laser_tf);
     prev_time = now;
   });   //actual_vel로 현재 위치를 추정한 데이터를 가공해서 slam으로 보내야함
   

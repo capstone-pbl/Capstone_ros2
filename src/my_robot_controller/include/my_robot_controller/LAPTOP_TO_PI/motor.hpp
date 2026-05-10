@@ -21,6 +21,7 @@ class Motor:public rclcpp::Node
   int uart_fd;
   int serial_fd;
   void init_serial(); 
+  rclcpp::Time last_write_time;
 };
 
 

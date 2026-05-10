@@ -9,18 +9,22 @@
 #define L 0.288
 #define circumference (M_PI * 0.065)
 
-Motor::Motor() : Node("Motor"), serial_fd(-1)
+Motor::Motor() : Node("Motor"), serial_fd(-1),last_write_time(this->now())
 {
     // 1. 시리얼 포트 초기화 (열기)
     init_serial();
 
     // 2. 실제 속도 발행 통로 (나중에 피드백 받을 때 사용)
+
     pub_actual_vel = this->create_publisher<geometry_msgs::msg::Twist>("/actual_vel", 10);
 
     // 3. /cmd_vel 구독 및 STM32 전송
     sub_cmd = this->create_subscription<geometry_msgs::msg::Twist>("/cmd_vel", 10,
     [this](geometry_msgs::msg::Twist::SharedPtr msg)
     {
+        auto now = this->now();
+        if ((now - last_write_time).seconds() < 0.05) return;
+        last_write_time = now;
         double v = msg->linear.x;
         double w = msg->angular.z;
 
@@ -42,8 +46,12 @@ Motor::Motor() : Node("Motor"), serial_fd(-1)
             int len = sprintf(tx_buffer, "M%.2f,%.2f\n", L_RPM, R_RPM);
             //tx_buffer에 "M%.2f,%.2f\n"형태로 저장 
             // 실제로 UART 선으로 데이터 발사
+            RCLCPP_INFO(this->get_logger(),"write전");
+           
             write(serial_fd, tx_buffer, len);
+            RCLCPP_INFO(this->get_logger(),"write후");
             RCLCPP_INFO(this->get_logger(), "STM32 전송: %s", tx_buffer);
+        
         }
     }); 
 
@@ -53,11 +61,13 @@ Motor::Motor() : Node("Motor"), serial_fd(-1)
     double L_RPM, R_RPM;
     char rx_buffer[64];
      RCLCPP_INFO(this->get_logger(),"타이머 호출됨");
+     RCLCPP_INFO(this->get_logger(),"read전");
      int n = read(serial_fd,rx_buffer,sizeof(rx_buffer) - 1);   //read(serial_fd, 버퍼, 크기); null문자 자리 확보
+     RCLCPP_INFO(this->get_logger(),"read후");
     // 최대 rx_buffer의 크기 - 1 만큼 데이터를 한번에 읽어옴      
-     rx_buffer[n] = '\0';
-     if(n>0)
+    if(n>0)
      {
+        rx_buffer[n] = '\0';
         RCLCPP_INFO(this->get_logger(),"rx 데이터:%s",rx_buffer);     
         sscanf(rx_buffer,"F%lf,%lf\n",&L_RPM,&R_RPM);
         RCLCPP_INFO(this->get_logger(),"L_RPM:%.2f, R_RPM:%.2f",L_RPM,R_RPM);
@@ -71,6 +81,7 @@ Motor::Motor() : Node("Motor"), serial_fd(-1)
          auto msg=geometry_msgs::msg::Twist();
          msg.linear.x = v;
          msg.angular.z = w;
+        RCLCPP_INFO(this->get_logger(),"pub_actual_vel전");
          pub_actual_vel->publish(msg);
     }
     
@@ -111,6 +122,7 @@ void Motor::init_serial()
     options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);  // raw 모드
     options.c_oflag &= ~OPOST;  // 출력 처리 끔
     tcsetattr(serial_fd, TCSANOW, &options);
+    fcntl(serial_fd, F_SETFL, O_NONBLOCK);
     RCLCPP_INFO(this->get_logger(), "시리얼 포트 설정 완료 (115200)");
 }
 
