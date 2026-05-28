@@ -3,15 +3,15 @@
 
 
 
-
-
 Brain::Brain():Node("Brain")
 {
 
+state_pub = this->create_publisher<std_msgs::msg::String>("/brain_state",10);
 nav_client_=rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(this,"navigate_to_pose");
-zone_coords["A"]={1.0,2.0};
- zone_coords["B"]={3.0,2.0};
- zone_coords["home"]={0.0,0.0};
+zone_coords["home"]={0.10,0.005};
+ zone_coords["A"]={2.23,-2.09};
+ zone_coords["B"]={-7.28,7.96};
+ zone_coords["C"]={-4.45,7.08};
 calling_ = this->create_subscription<std_msgs::msg::String>("/call_zone",10,
 [this](std_msgs::msg::String::SharedPtr msg)
 {
@@ -35,7 +35,7 @@ calling_ = this->create_subscription<std_msgs::msg::String>("/call_zone",10,
 
    goal.pose.pose.position.x= x;
    goal.pose.pose.position.y= y;
-
+   goal.pose.pose.orientation.w = 1.0;
     auto send_goal_options = rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions();
     send_goal_options.result_callback = [this](auto result)
     {
@@ -62,6 +62,10 @@ switch(current_state)
 { 
  case IDLE:
  {  
+   auto s = std_msgs::msg::String();
+   s.data = "IDLE";
+   state_pub->publish(s);
+  
   if((count++ % 50)==0)RCLCPP_INFO(this->get_logger(),"[IDLE]명령 대기중");
 
  break;
@@ -69,7 +73,10 @@ switch(current_state)
  
  case MOVING:
  {
- if((count++ % 5)==0)RCLCPP_INFO(this->get_logger(),"[MOVING]%s구역으로 이동중",zone_name.c_str());
+   auto s = std_msgs::msg::String();
+   s.data = "MOVING";
+   state_pub->publish(s);
+  if((count++ % 5)==0)RCLCPP_INFO(this->get_logger(),"[MOVING]%s구역으로 이동중",zone_name.c_str());
  
  break;
  
@@ -77,7 +84,9 @@ switch(current_state)
 
  case ARRIVED:
  {
- 
+   auto s = std_msgs::msg::String();
+   s.data = "ARRIVED";
+   state_pub->publish(s);
  if((count++ % 5)==0)RCLCPP_INFO(this->get_logger(),"[ARRIVED]%s구역에 도착. 사용자 탐색중",zone_name.c_str());
  
  break;
@@ -86,7 +95,10 @@ switch(current_state)
 
  case RETURNING:
  {
- if((count++ % 5)==0)RCLCPP_INFO(this->get_logger(),"[RETURNING]%s구역 탐색 마치고 복귀중",zone_name.c_str());
+  auto s = std_msgs::msg::String();
+  s.data = "RETURNING";
+  state_pub->publish(s);
+  if((count++ % 5)==0)RCLCPP_INFO(this->get_logger(),"[RETURNING]%s구역 탐색 마치고 복귀중",zone_name.c_str());
  
  break;
  

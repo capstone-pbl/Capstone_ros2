@@ -21,7 +21,9 @@ RCLCPP_INFO(this->get_logger(), "콜백 호출됨 ");
 
     double v = msg->linear.x;
     double w = msg->angular.z;
-   
+    if (fabs(v) < 0.01) v = 0.0;  
+    if (fabs(w) < 0.05) w = 0.0;   
+    
     theta += w*dt; 
     x += v*cos(theta)*dt;
     y += v*sin(theta)*dt;

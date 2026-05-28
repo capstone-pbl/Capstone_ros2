@@ -13,8 +13,14 @@ find_package(nav_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(rclcpp_action REQUIRED)
+find_package(nav2_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 
 include_directories(include)
+
+add_executable(brain src/LAPTOP_TO_PI/brain.cpp)
+ament_target_dependencies(brain rclcpp rclcpp_action geometry_msgs nav2_msgs std_msgs)
 
 add_executable(motor src/LAPTOP_TO_PI/motor.cpp)
 ament_target_dependencies(motor rclcpp geometry_msgs)
@@ -25,6 +31,7 @@ ament_target_dependencies(odom rclcpp geometry_msgs nav_msgs tf2 tf2_ros tf2_geo
 install(TARGETS
   motor
   odom
+  brain
   DESTINATION lib/${PROJECT_NAME}
 )
 

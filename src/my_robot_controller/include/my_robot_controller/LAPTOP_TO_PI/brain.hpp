@@ -18,6 +18,7 @@ class Brain:public rclcpp::Node
  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr calling_;
  rclcpp::TimerBase::SharedPtr timer_;
  rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SharedPtr nav_client_;
+ rclcpp::Publisher<std_msgs::msg::String>::SharedPtr state_pub;
  enum State
  {
   IDLE , MOVING,ARRIVED,RETURNING
