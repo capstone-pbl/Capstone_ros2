@@ -13,6 +13,7 @@ Blynk 앱에서 구역(A/B/C)을 호출하면 RPLiDAR C1으로 생성한 맵 위
 
 [![시연 영상 1](https://img.youtube.com/vi/nU25p0-28sU/maxresdefault.jpg)](https://youtu.be/nU25p0-28sU)
 [![시연 영상 2](https://img.youtube.com/vi/Q-DqqO-98y0/maxresdefault.jpg)](https://youtu.be/Q-DqqO-98y0)
+[![풀영상](https://img.youtube.com/vi/_P7MjUuQxro/maxresdefault.jpg)](https://youtu.be/_P7MjUuQxro)
 
 ## 시스템 전체 구조
 
