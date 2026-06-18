@@ -9,6 +9,10 @@ Blynk 앱에서 구역(A/B/C)을 호출하면 RPLiDAR C1으로 생성한 맵 위
 - 동적 장애물 회피 포함 시연 성공
 - 캡스톤 디자인 **동상 수상**
 
+## 시연 영상
+
+[![시연 영상](https://img.youtube.com/vi/nU25p0-28sU/maxresdefault.jpg)](https://youtu.be/nU25p0-28sU)
+
 ## 시스템 전체 구조
 
 ```
@@ -143,5 +147,4 @@ source install/setup.bash
 - **Brain 노드**: 상태머신 설계 및 Nav2 Action 클라이언트 구현
 - **Motor 노드**: 역기구학 계산, UART 시리얼 통신, STM32 프로토콜 연동
 - **Odom 노드**: 데드레코닝 위치 추정, TF 브로드캐스트
-- **CycloneDDS 설정**: Tailscale 기반 WSL ↔ RPi 크로스머신 ROS2 통신
-- **Blynk MQTT 연동**: 구역 호출 → `/call_zone` 토픽 트리거
+- **CycloneDDS 설정**: Tail
