@@ -149,4 +149,4 @@ source install/setup.bash
 - **Brain 노드**: 상태머신 설계 및 Nav2 Action 클라이언트 구현
 - **Motor 노드**: 역기구학 계산, UART 시리얼 통신, STM32 프로토콜 연동
 - **Odom 노드**: 데드레코닝 위치 추정, TF 브로드캐스트
-- **CycloneDDS 설정**: Tail
+- **CycloneDDS 설정**: Tailscale VPN 기반 WSL ↔ RPi 크로스머신 ROS2 통신 구성
